@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Signup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .toggle {
+      text-align: center;
+      margin-top: 10px;
+      color: #007bff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="form-title">Login</h2>
+    <form id="auth-form">
+      <input type="text" id="username" placeholder="Username" style="display:none;">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Submit</button>
+    </form>
+    <div class="toggle" id="toggle-auth">Don't have an account? Sign up here</div>
+  </div>
+
+  <script>
+    const form = document.getElementById('auth-form');
+    const toggleAuth = document.getElementById('toggle-auth');
+    const usernameInput = document.getElementById('username');
+    const formTitle = document.getElementById('form-title');
+    
+    let isLogin = true;
+
+    toggleAuth.addEventListener('click', () => {
+      isLogin = !isLogin;
+      if (isLogin) {
+        formTitle.innerText = 'Login';
+        usernameInput.style.display = 'none';
+        toggleAuth.innerText = "Don't have an account? Sign up here";
+      } else {
+        formTitle.innerText = 'Sign Up';
+        usernameInput.style.display = 'block';
+        toggleAuth.innerText = 'Already have an account? Login here';
+      }
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const username = document.getElementById('username').value;
+
+      const data = {
+        email,
+        password,
+        ...(isLogin ? {} : { username })
+      };
+
+      const url = isLogin ? '/auth/login' : '/auth/signup';
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      alert(result.message);
+
+      if (response.ok) {
+        window.location.href = '/success.html';
+      }
+    });
+  </script>
+</body>
+</html>
